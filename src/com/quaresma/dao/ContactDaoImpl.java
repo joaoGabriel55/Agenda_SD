@@ -16,7 +16,7 @@ public class ContactDaoImpl extends GenericDaoImpl<Contact, Integer> implements 
 
 	@SuppressWarnings({ "deprecation", "unchecked", "rawtypes" })
 	@Override
-	public List<Contact> findAllByContactUser(int idUser) {
+	public List<Contact> findAllByContactUser(Integer idUser) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		try {
 			Query query = session.getSession().createQuery(
@@ -35,7 +35,7 @@ public class ContactDaoImpl extends GenericDaoImpl<Contact, Integer> implements 
 
 	@SuppressWarnings({ "rawtypes", "deprecation" })
 	@Override
-	public Contact findContactUser(int idUser, int idContact) {
+	public Contact findContactUser(Integer idUser, Integer idContact) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 
 		Contact contact = new Contact();

@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @SuppressWarnings("serial")
 @Entity
 @Table(name = "user")
@@ -34,6 +36,7 @@ public class User implements Serializable {
 	private String token;
 
 	@OneToMany(mappedBy = "user")
+	@JsonIgnoreProperties(value = "user") // to ignore the make from Model class while parsing to your json/xml
 	private List<Contact> contacts;
 
 	public User(String name, String userName, String password, String token, List<Contact> contacts) {

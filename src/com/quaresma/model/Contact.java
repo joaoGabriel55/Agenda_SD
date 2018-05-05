@@ -11,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @SuppressWarnings("serial")
 @Entity
 @Table(name = "contact")
@@ -23,6 +25,7 @@ public class Contact implements Serializable {
 
 	@ManyToOne
 	@JoinColumn(name = "id_user", nullable = false)
+	@JsonIgnoreProperties(value = "contact") // to ignore the models from Make class while parsing to your json/xml
 	private User user;
 
 	@Column(nullable = false)

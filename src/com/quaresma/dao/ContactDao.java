@@ -7,7 +7,7 @@ import com.quaresma.persist.GenericDao;
 
 public interface ContactDao extends GenericDao<Contact, Integer> { 
 	
-	public List<Contact> findAllByContactUser(int idUser);
+	public List<Contact> findAllByContactUser(Integer idUser);
 	
-	public Contact findContactUser(int idUser, int idContact);
+	public Contact findContactUser(Integer idUser, Integer idContact);
 }

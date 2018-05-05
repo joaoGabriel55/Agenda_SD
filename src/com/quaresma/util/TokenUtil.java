@@ -21,7 +21,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
  */
 public class TokenUtil {
     
-    public static String criaToken(String username, int idUser) {                
+    public static String criaToken(String username, Integer idUser) {                
         
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS384;
         
@@ -35,7 +35,7 @@ public class TokenUtil {
                 .claim("create", Calendar.getInstance().getTime())
                 .signWith(signatureAlgorithm, signingKey);//Token completo e compactado
         
-        String id = Integer.toString(idUser);
+        String id = Long.toString(idUser);
         
         String compact = builder.compact();
         
