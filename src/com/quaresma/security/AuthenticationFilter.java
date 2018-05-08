@@ -30,11 +30,14 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 		}
 		
 		// Obtem o token
-		String token = authorizationHeader.substring("Bearer".length()).trim();
+		String tokenTemp = authorizationHeader.substring("Bearer".length()).trim();
+		
+		String[] token = tokenTemp.split(";");
+		final String idUser = token[1];
 		
 		try { 
 			// Valida o token
-			TokenUtil.validaToken(token);
+			TokenUtil.validaToken(token[0], Integer.parseInt(idUser));
 		} catch (Exception e) {
 			// Aborta a execução
 			requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
@@ -44,17 +47,16 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
 			@Override
 			public Principal getUserPrincipal() {
-				Principal principal = new Principal() {
+				return new Principal() {
 					
+					/**getName() == id user*/
 					@Override
 					public String getName() {
 						// usuario/ID/etc que veio do banco após a validacao do token
-						return authorizationHeader;
+						return idUser;
 					}
 
 				};
-
-				return principal;
 			}
 
 			@Override

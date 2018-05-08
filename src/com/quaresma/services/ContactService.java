@@ -41,9 +41,7 @@ public class ContactService {
 		ContactDao contactDao = new ContactDaoImpl();
 		UserDao userDao = new UserDaoImpl();
 		try {
-			
-			String[] id = securityContext.getUserPrincipal().getName().split(";");
-			String idUser = id[1];//Id do usuario via token
+			String idUser = securityContext.getUserPrincipal().getName();//Id do usuario via token
 			
 			User user = userDao.findById(Integer.parseInt(idUser));
 			
@@ -76,7 +74,7 @@ public class ContactService {
 		//return Response.status(Response.Status.NO_CONTENT).build();
 		if (Contact == null)
 			throw new CustomNoContentException();
-
+		
 		ContactDao.delete(Contact);
 		
 		return Response.status(Response.Status.OK)
@@ -86,6 +84,7 @@ public class ContactService {
 	}
 
 	@PUT
+	@Secured
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response update(Contact t) {
@@ -103,6 +102,7 @@ public class ContactService {
 	}
 
 	@GET
+	@Secured
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response listById(@PathParam("id") int id) {
@@ -121,6 +121,7 @@ public class ContactService {
 	}
 
 	@GET
+	@Secured
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response listAll(@QueryParam("orderby") @DefaultValue("id") String orderBy,
 							@QueryParam("sort") @DefaultValue("asc") String sort) {
