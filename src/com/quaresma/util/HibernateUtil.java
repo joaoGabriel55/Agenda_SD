@@ -10,6 +10,7 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 
 import com.quaresma.model.Contact;
+import com.quaresma.model.Credenciais;
 import com.quaresma.model.User;
 
 import org.hibernate.SessionFactory;
@@ -29,6 +30,7 @@ public class HibernateUtil {
     
             cfg.addAnnotatedClass(User.class);
             cfg.addAnnotatedClass(Contact.class);
+            cfg.addAnnotatedClass(Credenciais.class);
 
             StandardServiceRegistryBuilder registradorServico = new StandardServiceRegistryBuilder();
             registradorServico.applySettings(cfg.getProperties());

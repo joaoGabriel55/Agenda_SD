@@ -13,6 +13,7 @@ import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.ext.Provider;
 
 import com.quaresma.exceptions.CustomNotAuthorizedException;
+import com.quaresma.model.Credenciais;
 import com.quaresma.util.TokenUtil;
 
 @Provider
@@ -30,53 +31,51 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 		}
 		
 		// Obtem o token
-		String tokenTemp = authorizationHeader.substring("Bearer".length()).trim();
-		
-		String[] token = tokenTemp.split(";");
-		final String idUser = token[1];
-		
+		String token = authorizationHeader.substring("Bearer".length()).trim();	
 		try { 
 			// Valida o token
-			TokenUtil.validaToken(token[0], Integer.parseInt(idUser));
+			final Credenciais credenciais = TokenUtil.validaToken(token);
+			
+			requestContext.setSecurityContext(new SecurityContext() {
+
+				@Override
+				public Principal getUserPrincipal() {
+					return new Principal() {
+						
+						/**getName() == id user*/
+						@Override
+						public String getName() {
+							// usuario/ID/etc que veio do banco após a validacao do token
+							return Integer.toString(credenciais.getUser().getId());
+						}
+
+					};
+				}
+
+				@Override
+				public boolean isUserInRole(String role) {
+					// TODO Auto-generated method stub
+					return false;
+				}
+
+				@Override
+				public boolean isSecure() {
+					// TODO Auto-generated method stub
+					return false;
+				}
+
+				@Override
+				public String getAuthenticationScheme() {
+					// TODO Auto-generated method stub
+					return null;
+				}
+			});
 		} catch (Exception e) {
 			// Aborta a execução
 			requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
 		}
 
-		requestContext.setSecurityContext(new SecurityContext() {
 
-			@Override
-			public Principal getUserPrincipal() {
-				return new Principal() {
-					
-					/**getName() == id user*/
-					@Override
-					public String getName() {
-						// usuario/ID/etc que veio do banco após a validacao do token
-						return idUser;
-					}
-
-				};
-			}
-
-			@Override
-			public boolean isUserInRole(String role) {
-				// TODO Auto-generated method stub
-				return false;
-			}
-
-			@Override
-			public boolean isSecure() {
-				// TODO Auto-generated method stub
-				return false;
-			}
-
-			@Override
-			public String getAuthenticationScheme() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-		});
 
 	}
 

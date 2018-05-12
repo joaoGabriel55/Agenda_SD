@@ -1,6 +1,7 @@
 package com.quaresma.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -26,28 +27,21 @@ public class User implements Serializable {
 	@Column(nullable = false)
 	private String name;
 
-	@Column(name = "user_name", nullable = false)
-	private String userName;
-
-	@Column(nullable = false)
-	private String password;
-
-	@Column
-	private String token;
+	@Column(name = "data_ativacao", nullable = false)
+	private Date dataAtivacao;
 
 	@OneToMany(mappedBy = "user")
 	@JsonIgnoreProperties(value = "user") // to ignore the make from Model class while parsing to your json/xml
 	private List<Contact> contacts;
 
-	public User(String name, String userName, String password, String token, List<Contact> contacts) {
-		this.name = name;
-		this.userName = userName;
-		this.password = password;
-		this.token = token;
-		this.contacts = contacts;
+	public User() {
 	}
 
-	public User() {
+	public User(String name, Date dataAtivacao, List<Contact> contacts) {
+		super();
+		this.name = name;
+		this.dataAtivacao = dataAtivacao;
+		this.contacts = contacts;
 	}
 
 	public Integer getId() {
@@ -66,28 +60,12 @@ public class User implements Serializable {
 		this.name = name;
 	}
 
-	public String getUserName() {
-		return userName;
+	public Date getDataAtivacao() {
+		return dataAtivacao;
 	}
 
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getToken() {
-		return token;
-	}
-
-	public void setToken(String token) {
-		this.token = token;
+	public void setDataAtivacao(Date dataAtivacao) {
+		this.dataAtivacao = dataAtivacao;
 	}
 
 	public List<Contact> getContacts() {
@@ -102,12 +80,7 @@ public class User implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((contacts == null) ? 0 : contacts.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((password == null) ? 0 : password.hashCode());
-		result = prime * result + ((token == null) ? 0 : token.hashCode());
-		result = prime * result + ((userName == null) ? 0 : userName.hashCode());
 		return result;
 	}
 
@@ -120,35 +93,10 @@ public class User implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		User other = (User) obj;
-		if (contacts == null) {
-			if (other.contacts != null)
-				return false;
-		} else if (!contacts.equals(other.contacts))
-			return false;
 		if (id == null) {
 			if (other.id != null)
 				return false;
 		} else if (!id.equals(other.id))
-			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		if (password == null) {
-			if (other.password != null)
-				return false;
-		} else if (!password.equals(other.password))
-			return false;
-		if (token == null) {
-			if (other.token != null)
-				return false;
-		} else if (!token.equals(other.token))
-			return false;
-		if (userName == null) {
-			if (other.userName != null)
-				return false;
-		} else if (!userName.equals(other.userName))
 			return false;
 		return true;
 	}

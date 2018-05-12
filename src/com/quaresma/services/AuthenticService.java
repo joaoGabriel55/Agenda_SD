@@ -9,10 +9,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
-import com.quaresma.dao.UserDao;
-import com.quaresma.dao.UserDaoImpl;
+import com.quaresma.dao.CredenciaisDao;
+import com.quaresma.dao.CredenciaisDaoImpl;
 import com.quaresma.exceptions.OutputMessage;
-import com.quaresma.model.User;
+import com.quaresma.model.Credenciais;
 import com.quaresma.util.TokenUtil;
 
 @Path("/authentic")
@@ -21,14 +21,14 @@ public class AuthenticService {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response authenticUser(User user, @Context SecurityContext securityContext) {
-		UserDao userDao = new UserDaoImpl();
+	public Response authenticUser(Credenciais user, @Context SecurityContext securityContext) {
+		CredenciaisDao credenciaisDao = new CredenciaisDaoImpl();
 		try {
-			User userLogged = validUser(user.getUserName(), user.getPassword());
-			String token = TokenUtil.criaToken(user.getUserName(), userLogged.getId());
+			Credenciais userLogged = validUser(user.getUsername(), user.getPassword());
+			String token = TokenUtil.criaToken(user.getUsername());
 			
 			userLogged.setToken(token);
-			userDao.save(userLogged);
+			credenciaisDao.save(userLogged);
 			
 			return Response.status(Response.Status.OK).entity(new OutputMessage(200, token)).build();
 		} catch (Exception e) {
@@ -40,10 +40,10 @@ public class AuthenticService {
 
 	}
 
-	public User validUser(String userName, String pass) throws Exception {
-		UserDao userDao = new UserDaoImpl();
+	public Credenciais validUser(String userName, String pass) throws Exception {
+		CredenciaisDao userDao = new CredenciaisDaoImpl();
 
-		User user = userDao.validUser(userName, pass);
+		Credenciais user = userDao.validUser(userName, pass);
 
 		if (user == null)
 			throw new Exception("User doesn't exists.");

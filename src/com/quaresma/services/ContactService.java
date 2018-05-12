@@ -17,8 +17,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
-import org.hibernate.criterion.Order;
-
 import com.quaresma.dao.ContactDao;
 import com.quaresma.dao.ContactDaoImpl;
 import com.quaresma.dao.UserDao;
@@ -69,13 +67,20 @@ public class ContactService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response delete(@PathParam("id") int id, @Context SecurityContext securityContext) throws CustomNoContentException{
 		ContactDao ContactDao = new ContactDaoImpl();
-		Contact Contact = ContactDao.findById(id);
+		Contact contact = ContactDao.findById(id);
 
 		//return Response.status(Response.Status.NO_CONTENT).build();
-		if (Contact == null)
+		if (contact == null)
 			throw new CustomNoContentException();
 		
-		ContactDao.delete(Contact);
+		if(contact.getUser() != null) {
+			if(contact.getUser().getId() == Integer.parseInt((securityContext.getUserPrincipal().getName()))) {
+				ContactDao.delete(contact);				
+			} else {
+				throw new CustomNoContentException();
+			}
+		}
+		
 		
 		return Response.status(Response.Status.OK)
 				//.entity(new OutputMessage(200, "Contact Removida"))
@@ -87,17 +92,19 @@ public class ContactService {
 	@Secured
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response update(Contact t) {
+	public Response update(Contact contact, @Context SecurityContext securityContext) {
 
 		try {
-			ContactDao ContactDao = new ContactDaoImpl();
-			ContactDao.save(t);
+			if(contact.getUser().getId() == Integer.parseInt((securityContext.getUserPrincipal().getName()))) {
+				ContactDao contactDao = new ContactDaoImpl();
+				contactDao.save(contact);
+			}
 		} catch (Exception e) {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(new OutputMessage(500, e.getMessage()))
 					.build();
 		}
 
-		return Response.status(Response.Status.OK).entity(t).build();
+		return Response.status(Response.Status.OK).entity(contact).build();
 
 	}
 
@@ -105,14 +112,20 @@ public class ContactService {
 	@Secured
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response listById(@PathParam("id") int id) {
+	public Response listById(@PathParam("id") int idContact, @Context SecurityContext securityContext) {
 		try {
 			ContactDao ContactDAO = new ContactDaoImpl();
-			Contact obj = ContactDAO.findById(id);
+			int idUser = Integer.parseInt(securityContext.getUserPrincipal().getName());
+			Contact obj = ContactDAO.findById(idContact);
+			
 			if (obj == null) {
 				return Response.status(Response.Status.NO_CONTENT).build();
 			} else {
-				return Response.status(Response.Status.OK).entity(obj).build();
+				if(idUser == obj.getUser().getId())
+					return Response.status(Response.Status.OK).entity(obj).build();
+				else
+					return Response.status(Response.Status.NO_CONTENT).build();
+
 			}
 		} catch (Exception e) {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(new OutputMessage(500, e.getMessage()))
@@ -124,14 +137,16 @@ public class ContactService {
 	@Secured
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response listAll(@QueryParam("orderby") @DefaultValue("id") String orderBy,
-							@QueryParam("sort") @DefaultValue("asc") String sort) {
+							@QueryParam("sort") @DefaultValue("asc") String sort,
+							@Context SecurityContext securityContext) {
 		try {
 			ContactDao ContactDAO = new ContactDaoImpl();
 			List<Contact> obj;
+			int idUser = Integer.parseInt(securityContext.getUserPrincipal().getName());
 			if (sort.equals("desc")) {
-				obj = ContactDAO.findAll(Order.desc(orderBy));
+				obj = ContactDAO.findAllByContactUser(idUser, sort, orderBy);
 			} else {
-				obj = ContactDAO.findAll(Order.asc(orderBy));
+				obj = ContactDAO.findAllByContactUser(idUser, sort, orderBy);
 			}
 			if (obj == null) {
 				return Response.status(Response.Status.NO_CONTENT).build();

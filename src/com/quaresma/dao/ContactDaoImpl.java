@@ -16,13 +16,13 @@ public class ContactDaoImpl extends GenericDaoImpl<Contact, Integer> implements 
 
 	@SuppressWarnings({ "deprecation", "unchecked", "rawtypes" })
 	@Override
-	public List<Contact> findAllByContactUser(Integer idUser) {
+	public List<Contact> findAllByContactUser(Integer idUser, String order, String orderBy) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		try {
 			Query query = session.getSession().createQuery(
-					"SELECT c FROM Contact c "
+					"SELECT c.id, c.name, c.phone, c.rating, c.description FROM Contact c "
 					+ " INNER JOIN c.user as u "
-					+ " WHERE u.id = " + idUser);
+					+ " WHERE u.id = " + idUser + " ORDER BY " + "c." + orderBy + " " + order);
 			
 			
 			List<Contact> contacts = query.list();
@@ -33,26 +33,5 @@ public class ContactDaoImpl extends GenericDaoImpl<Contact, Integer> implements 
 		}
 	}
 
-	@SuppressWarnings({ "rawtypes", "deprecation" })
-	@Override
-	public Contact findContactUser(Integer idUser, Integer idContact) {
-		Session session = HibernateUtil.getSessionFactory().openSession();
-
-		Contact contact = new Contact();
-		try {
-			Query query = session.getSession().createQuery(
-					"SELECT c FROM Contact c "
-					+ " INNER JOIN c.user as u "
-					+ " WHERE u.id = " + idUser + " AND c.id = "+ idContact);
-			
-			contact = (Contact) query.uniqueResult();
-			
-		} catch (Exception e) {
-			e.getMessage();
-		} finally {
-			session.close();
-		}
-		return contact;
-	}
 
 }

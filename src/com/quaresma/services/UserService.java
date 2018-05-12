@@ -1,5 +1,6 @@
 package com.quaresma.services;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -19,30 +20,35 @@ import javax.ws.rs.core.SecurityContext;
 
 import org.hibernate.criterion.Order;
 
+import com.quaresma.dao.CredenciaisDao;
+import com.quaresma.dao.CredenciaisDaoImpl;
 import com.quaresma.dao.UserDao;
 import com.quaresma.dao.UserDaoImpl;
 import com.quaresma.exceptions.CustomNoContentException;
 import com.quaresma.exceptions.OutputMessage;
+import com.quaresma.model.Credenciais;
 import com.quaresma.model.User;
 import com.quaresma.security.Secured;
 
 @Path("/user")
 public class UserService {
 
+	
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response create(User t) {
+	public Response create(Credenciais credenciais) {
 
 		try {
-			UserDao dao = new UserDaoImpl();
-			dao.save(t);
+			CredenciaisDao dao = new CredenciaisDaoImpl();
+			credenciais.getUser().setDataAtivacao(new Date());
+			dao.save(credenciais);
 
 		} catch (Exception e) {
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).build();
 		}
 
-		return Response.status(Response.Status.CREATED).entity(t).build();
+		return Response.status(Response.Status.CREATED).entity(credenciais).build();
 
 	}
 

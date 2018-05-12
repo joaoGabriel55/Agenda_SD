@@ -5,6 +5,6 @@ import com.quaresma.persist.GenericDao;
 
 public interface UserDao extends GenericDao<User, Integer> {
 	
-	public User validUser(String userName, String pass);
+	
 	
 }
