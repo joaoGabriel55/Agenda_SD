@@ -1,0 +1,38 @@
+--------------- POST user ---------------
+
+{	
+	"user":{
+		"name":"Geo"
+	},
+	"username":"geo789",
+	"password": "123"
+}
+
+--------------- POST contact ---------------
+
+{
+	"name":"Batman",
+	"phone":"99999999",
+	"description":"nice",
+	"rating":10
+}
+
+--------------- POST authentic ---------------
+
+{
+	"username": "geo789",
+	"password": "123"
+}
+
+--------------- PUT contact ---------------
+
+{
+		"id":2,
+        "name":"Batman",
+        "phone":"99999999",
+        "rating":10,
+        "description":"good",
+		"user":{
+			"id":2
+		}
+}
